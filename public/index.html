@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+    <title>Imageboard</title>
+    <meta name="viewport" content="width=device-width" initial-scale="1">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    
+    <div id="main">
+
+        <img src="logo.png" alt="logo" id="logo">
+        <h1>{{greeting}}</h1>  
+        
+        <div id="imageupload">
+        
+                <div>
+                    <label for="title">Title:</label>
+                    <input v-model="title" name="title" type="text" placeholder="Image title">
+                </div>
+                <div>
+                    <label for="desc">Description:</label>
+                    <input  v-model="desc" name="desc"type="text" placeholder="Image description">
+                </div>
+                <div>
+                    <label for="username">Username:</label>
+                    <input v-model="username" name="username" type="text" placeholder="Shared by">
+                </div>
+                <div>
+                    <input type="file" accept="image/*" name="file" @change="selectedFile">
+                </div>
+                <button @click="submit">Submit</button>
+
+        </div>
+
+
+        <lightbox-component v-if="clickedImageId" :id="clickedImageId" @close="clickedImageId = false"></lightbox-component>
+
+        <div id="imageboard">
+
+            <div class="card" v-for="image in images" @click="clickedImageId = image.id">
+                <img :src="image.url">
+                <div id="title">{{image.title}}</div>
+            </div>
+            
+        </div>
+        
+        <div id="more">
+            <button v-if="buttonOn" @click="loadmore">More</button>
+        </div>
+        
+    </div>
+
+    <script id="lightbox-template" type="text/x-template">
+
+        <div class="lightbox-wrapper">          
+
+            <div id="userinput-wrapper">
+                <div id="inner-wrapper">
+                    <div>
+                        <img :src="url">
+                    </div>
+                    <div id="userinput">
+                        <div class="headline">Title:</div>
+                        <div>{{title}}</div>
+                        <div class="headline">Description:</div>
+                        <div>{{desc}}</div>
+                        <div class="headline">Shared by:</div>
+                        <div>{{username}}</div>          
+
+                        <div @click="$emit('close')" id="close">ⓧ</div>                       
+
+                    </div>                         
+                    
+                </div>
+                <comment-component :id="id" v-bind:comments="comments"></comment-component>
+            </div>
+        </div>
+
+    </script>
+
+    <script id="comment-template" type="text/x-template">
+        <div class="comment-wrapper">
+            <h2>Leave your comment here:</h2>
+            <div>
+                <label for="username">Username: </label>
+                <input v-model="username" name="username" type="text" placeholder="Commented by">
+            </div>
+            <div>
+                <label for="comment">Comment: </label>
+                <input v-model="comment" name="comment" type="text" placeholder="Add your comment">
+            </div>
+            <button @click="submitComment">Submit</button>
+            <div v-for="comment in comments">
+                <div class="comments">
+                    <div>Commented by: {{comment.username}} </div>
+                    <div>Comment: {{comment.comment}} </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script src="/js/vue.js"></script>
+    <script src="/js/axios.min.js"></script>
+    <script src="/js/script.js"></script>
+</body>
+</html>
